@@ -16,6 +16,7 @@
 (define-constant err-expiry-in-past (err u1000))
 (define-constant err-price-zero (err u1001))
 (define-constant err-not-token-owner (err u1002))
+(define-constant err-owner-only (err u1003))
 
 ;; cancelling and fulfilling errors
 ;;
@@ -47,9 +48,21 @@
 (define-data-var listing-nonce uint u0)
 (define-data-var last-token-id uint u0)
 (define-non-fungible-token market-token uint)
+(define-fungible-token market-ft-token)
 
 (define-map whitelisted-asset-contracts principal bool)
 
+;; private functions
+;;
+(define-private (transfer-nft (token-contract <nft-trait>) (token-id uint) (sender principal) (recipient principal))
+	(contract-call? token-contract transfer token-id sender recipient)
+)
+
+(define-private (transfer-ft (token-contract <ft-trait>) (amount uint) (sender principal) (recipient principal))
+	(contract-call? token-contract transfer amount sender recipient none)
+)
+
+;;SIP009 Implementation
 (define-read-only (get-last-token-id)
 	(ok (var-get last-token-id))
 )
@@ -62,22 +75,35 @@
 	(ok (nft-get-owner? market-token token-id))
 )
 
-(define-public (transfer (token-id uint) (sender principal) (recipient principal))
-	(begin
-		(asserts! (is-eq tx-sender sender) err-not-token-owner)
-		(nft-transfer? market-token token-id sender recipient)
-	)
+
+
+;; SIP010 Implementation
+(define-read-only (get-name)
+	(ok "TinyMarket Coin")
 )
 
-;; private functions
-;;
-(define-private (transfer-nft (token-contract <nft-trait>) (token-id uint) (sender principal) (recipient principal))
-	(contract-call? token-contract transfer token-id sender recipient)
+(define-read-only (get-symbol)
+	(ok "MFT")
 )
 
-(define-private (transfer-ft (token-contract <ft-trait>) (amount uint) (sender principal) (recipient principal))
-	(contract-call? token-contract transfer amount sender recipient none)
+(define-read-only (get-decimals)
+	(ok u6)
 )
+
+(define-read-only (get-token-uri)
+	(ok none)
+)
+
+(define-read-only (get-balance (who principal))
+	(ok (ft-get-balance market-ft-token who))
+)
+
+(define-read-only (get-total-supply)
+	(ok (ft-get-supply market-ft-token))
+)
+
+
+
 ;; public and read-only functions
 ;;
 (define-read-only (is-whitelisted (asset-contract principal))

@@ -1,11 +1,13 @@
 [project]
 name = "tiny-market"
-authors = []
-description = ""
+authors = ["Antonio Llanos"]
+description = "Clarity Miami CityCoin Capstone Project"
 telemetry = true
 requirements = []
 cache_dir = "/Users/antoniollanos/.clarinet/cache"
 boot_contracts = ["pox", "costs-v2", "bns"]
+analysis = ["check_checker"] 
+
 [contracts.bogus-ft]
 path = "contracts/sip010-token.clar"
 depends_on = ["sip010-ft-trait"]
