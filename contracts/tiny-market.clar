@@ -67,9 +67,6 @@
 	(ok (var-get last-token-id))
 )
 
-(define-read-only (get-token-uri (token-id uint))
-	(ok none)
-)
 
 (define-read-only (get-owner (token-id uint))
 	(ok (nft-get-owner? market-token token-id))

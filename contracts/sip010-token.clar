@@ -36,7 +36,7 @@
 	(ok (ft-get-supply market-token))
 )
 
-; public functions
+;; public functions
 ;;
 (define-public (transfer (amount uint) (sender principal) (recipient principal) (memo (optional (buff 34))))
 	(begin
@@ -47,7 +47,7 @@
 	)
 )
 
-;
+
 (define-public (mint (amount uint) (recipient principal))
 	(begin
 		(asserts! (is-eq tx-sender contract-owner) err-owner-only)
